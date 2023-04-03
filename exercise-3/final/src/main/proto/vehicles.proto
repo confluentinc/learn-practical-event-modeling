@@ -1,0 +1,131 @@
+syntax = "proto3";
+option java_multiple_files = true;
+package io.confluent.examples.autonomo.transfer;
+
+import "common.proto";
+import "google/protobuf/timestamp.proto";
+
+// ***** Commands *****
+
+message AddVehicle {
+  string owner = 1; // UUID
+  string vin = 2;   // VIN
+}
+
+message MakeVehicleAvailable {
+  string vin = 1; // VIN
+}
+
+message MarkVehicleOccupied {
+  string vin = 1; // VIN
+}
+
+message MarkVehicleUnoccupied {
+  string vin = 1; // VIN
+}
+
+message RequestVehicleReturn {
+  string vin = 1; // VIN
+}
+
+message ConfirmVehicleReturn {
+  string vin = 1; // VIN
+}
+
+message RemoveVehicle {
+  string owner = 1; // UUID
+  string vin = 2;   // VIN
+}
+
+message VehicleCommand {
+  oneof command {
+    AddVehicle add_vehicle = 1;
+    MakeVehicleAvailable make_vehicle_available = 2;
+    MarkVehicleOccupied mark_vehicle_occupied = 3;
+    MarkVehicleUnoccupied mark_vehicle_unoccupied = 4;
+    RequestVehicleReturn request_vehicle_return = 5;
+    ConfirmVehicleReturn confirm_vehicle_return = 6;
+    RemoveVehicle remove_vehicle = 7;
+  }
+}
+
+// ***** Events *****
+
+message VehicleAdded {
+  string owner = 1; // UUID
+  string vin = 2;
+}
+
+message VehicleAvailable {
+  string vin = 1;
+  google.protobuf.Timestamp available_at = 2;
+}
+
+message VehicleOccupied {
+  string vin = 1;
+  google.protobuf.Timestamp occupied_at = 2;
+}
+
+message VehicleReturnRequested {
+  string vin = 1;
+  google.protobuf.Timestamp return_requested_at = 2;
+}
+
+message VehicleReturned {
+  string vin = 1;
+  google.protobuf.Timestamp returned_at = 2;
+}
+
+message VehicleReturning {
+  string vin = 1;
+  google.protobuf.Timestamp returning_at = 2;
+}
+
+message VehicleRemoved {
+  string owner = 1; // UUID
+  string vin = 2;
+  google.protobuf.Timestamp removed_at = 3;
+}
+
+message VehicleError {
+  string vin = 1;
+  string message = 2;
+}
+
+message VehicleEvent {
+  oneof event {
+    VehicleAdded vehicle_added = 1;
+    VehicleAvailable vehicle_available = 2;
+    VehicleOccupied vehicle_occupied = 3;
+    VehicleReturnRequested vehicle_return_requested = 4;
+    VehicleReturning vehicle_returning = 5;
+    VehicleReturned vehicle_returned = 6;
+    VehicleRemoved vehicle_removed = 7;
+    VehicleError vehicle_error = 8;
+  }
+}
+
+// ***** Read Models *****
+
+enum VehicleStatus {
+  InInventory = 0;
+  Available = 1;
+  Occupied = 2;
+  OccupiedReturning = 3;
+  Returning = 4;
+}
+
+message InitialVehicleState {}
+
+message Vehicle {
+  string vin = 1;
+  string owner = 2; // UUID
+  VehicleStatus status = 3;
+}
+
+message VehicleReadModel {
+  oneof read_model {
+    InitialVehicleState initial = 1;
+    Vehicle vehicle = 2;
+  }
+}

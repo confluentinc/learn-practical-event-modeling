@@ -1,0 +1,8 @@
+syntax = "proto3";
+option java_multiple_files = true;
+package io.confluent.examples.autonomo.transfer;
+
+message GeoCoordinates {
+  double lat = 1;
+  double lng = 2;
+}

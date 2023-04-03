@@ -1,0 +1,136 @@
+syntax = "proto3";
+option java_multiple_files = true;
+package io.confluent.examples.autonomo.transfer;
+
+import "common.proto";
+import "google/protobuf/timestamp.proto";
+
+// ***** Commands *****
+
+message RequestRide {
+  string rider = 1; // UUID
+  GeoCoordinates origin = 2;
+  GeoCoordinates destination = 3;
+  google.protobuf.Timestamp pickup_time = 4;
+}
+
+message ScheduleRide {
+  string ride = 1; // UUID
+  string vin = 2;  // VIN
+  google.protobuf.Timestamp pickup_time = 3;
+}
+
+message ConfirmPickup {
+  string ride = 1;  // UUID
+  string vin = 2;   // VIN
+  string rider = 3; // UUID
+  GeoCoordinates pickup_location = 4;
+}
+
+message EndRide {
+  string ride = 1; // UUID
+  GeoCoordinates drop_off_location = 2;
+}
+
+message CancelRide {
+  string ride = 1; // UUID
+}
+
+message RideCommand {
+  oneof command {
+    RequestRide request_ride = 1;
+    ScheduleRide schedule_ride = 2;
+    ConfirmPickup confirm_pickup = 3;
+    EndRide end_ride = 4;
+    CancelRide cancel_ride = 5;
+  }
+}
+
+// ***** Events *****
+
+message RideRequested {
+  string ride = 1; // UUID
+  string rider = 2; // UUID
+  GeoCoordinates origin = 3;
+  GeoCoordinates destination = 4;
+  google.protobuf.Timestamp pickup_time = 5;
+  google.protobuf.Timestamp requested_at = 6;
+}
+
+message RideScheduled {
+  string ride = 1; // UUID
+  string vin = 2;
+  google.protobuf.Timestamp pickup_time = 3;
+  google.protobuf.Timestamp scheduled_at = 4;
+}
+
+message RideCancelled {
+  string ride = 1; // UUID
+  string vin = 3;
+  google.protobuf.Timestamp cancelled_at = 2;
+}
+
+message RiderPickedUp {
+  string ride = 1; // UUID
+  string rider = 2; // UUID
+  string vin = 3;
+  GeoCoordinates pickup_location = 4;
+  google.protobuf.Timestamp picked_up_at = 5;
+}
+
+message RiderDroppedOff {
+  string ride = 1; // UUID
+  string vin = 3;
+  GeoCoordinates drop_off_location = 4;
+  google.protobuf.Timestamp dropped_off_at = 5;
+}
+
+message RideError {
+  string ride = 1; // UUID
+  string message = 2;
+}
+
+message RideEvent {
+  oneof event {
+    RideRequested ride_requested = 1;
+    RideScheduled ride_scheduled = 2;
+    RideCancelled ride_cancelled = 3;
+    RiderPickedUp rider_picked_up = 4;
+    RiderDroppedOff rider_dropped_off = 5;
+    RideError ride_error = 6;
+  }
+}
+
+// ***** Read Models *****
+
+enum RideStatus {
+  Requested = 0;
+  Scheduled = 1;
+  InProgress = 2;
+  Completed = 3;
+  Cancelled = 4;
+}
+
+message InitialRideState {}
+
+message Ride {
+  string id = 1; // UUID
+  string rider = 2; // UUID
+  google.protobuf.Timestamp pickup_time = 3;
+  GeoCoordinates pickupLocation = 4;
+  GeoCoordinates dropOffLocation = 5;
+  string vin = 6;
+  google.protobuf.Timestamp requested_at = 7;
+  google.protobuf.Timestamp scheduled_at = 8;
+  google.protobuf.Timestamp picked_up_at = 9;
+  google.protobuf.Timestamp dropped_off_at = 10;
+  google.protobuf.Timestamp cancelled_at = 11;
+  RideStatus status = 12;
+}
+
+message RideReadModel {
+  oneof read_model {
+    InitialRideState initial = 1;
+    Ride ride = 2;
+  }
+}

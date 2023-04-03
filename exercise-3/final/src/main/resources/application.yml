@@ -1,0 +1,17 @@
+micronaut:
+  application:
+    name: autonomo
+netty:
+  default:
+    allocator:
+      max-order: 3
+kafka:
+  bootstrap.servers: localhost:9092
+  schema.registry.url: http://localhost:8081
+  streams:
+    application.id: autonomo
+  topics:
+    ride-events: ride-events
+    rides: rides
+    vehicle-events: vehicle-events
+    vehicles: vehicles

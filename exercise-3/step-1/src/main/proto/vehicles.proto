@@ -1,0 +1,118 @@
+syntax = "proto3";
+option java_multiple_files = true;
+package io.confluent.examples.autonomo.transfer;
+
+import "common.proto";
+import "google/protobuf/timestamp.proto";
+
+// ***** Commands *****
+
+message AddVehicle {
+  // TODO
+}
+
+message MakeVehicleAvailable {
+  // TODO
+}
+
+message MarkVehicleOccupied {
+  // TODO
+}
+
+message MarkVehicleUnoccupied {
+  // TODO
+}
+
+message RequestVehicleReturn {
+  // TODO
+}
+
+message ConfirmVehicleReturn {
+  // TODO
+}
+
+message RemoveVehicle {
+  // TODO
+}
+
+message VehicleCommand {
+  oneof command {
+    AddVehicle add_vehicle = 1;
+    MakeVehicleAvailable make_vehicle_available = 2;
+    MarkVehicleOccupied mark_vehicle_occupied = 3;
+    MarkVehicleUnoccupied mark_vehicle_unoccupied = 4;
+    RequestVehicleReturn request_vehicle_return = 5;
+    ConfirmVehicleReturn confirm_vehicle_return = 6;
+    RemoveVehicle remove_vehicle = 7;
+  }
+}
+
+// ***** Events *****
+
+message VehicleAdded {
+  // TODO
+}
+
+message VehicleAvailable {
+  // TODO
+}
+
+message VehicleOccupied {
+  // TODO
+}
+
+message VehicleReturnRequested {
+  // TODO
+}
+
+message VehicleReturned {
+  // TODO
+}
+
+message VehicleReturning {
+  // TODO
+}
+
+message VehicleRemoved {
+  // TODO
+}
+
+message VehicleError {
+  // TODO
+}
+
+message VehicleEvent {
+  oneof event {
+    VehicleAdded vehicle_added = 1;
+    VehicleAvailable vehicle_available = 2;
+    VehicleOccupied vehicle_occupied = 3;
+    VehicleReturnRequested vehicle_return_requested = 4;
+    VehicleReturning vehicle_returning = 5;
+    VehicleReturned vehicle_returned = 6;
+    VehicleRemoved vehicle_removed = 7;
+    VehicleError vehicle_error = 8;
+  }
+}
+
+// ***** Read Models *****
+
+enum VehicleStatus {
+  InInventory = 0;
+  Available = 1;
+  Occupied = 2;
+  OccupiedReturning = 3;
+  Returning = 4;
+}
+
+message InitialVehicleState {} // Intentionally Empty
+
+message Vehicle {
+  // TODO
+}
+
+message VehicleReadModel {
+  oneof read_model {
+    InitialVehicleState initial = 1;
+    Vehicle vehicle = 2;
+  }
+}

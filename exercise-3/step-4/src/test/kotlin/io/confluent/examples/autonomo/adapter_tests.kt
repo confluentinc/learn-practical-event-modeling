@@ -1,0 +1,1 @@
+../../../../../../../../final/src/test/kotlin/io/confluent/examples/autonomo/adapter_tests.kt
