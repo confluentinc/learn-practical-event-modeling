@@ -1,4 +1,4 @@
-# Practical Event Modeling course hands-on
+# Practical Event Modeling course exercises
 
 These exercises are designed to follow along with the course modules
 to provide hands-on experience with the course material.  Exercise 1
