@@ -7,6 +7,9 @@ netty:
       max-order: 3
 kafka:
   bootstrap.servers: localhost:9092
+  security.protocol:
+  sasl.jaas.config:
+  sasl.mechanism:
   schema.registry.url: http://localhost:8081
   streams:
     application.id: autonomo

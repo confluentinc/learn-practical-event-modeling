@@ -42,11 +42,16 @@ two ways.
 
 To run with a Confluent Cloud Kafka cluster, first sign up for a
 [Confluent Cloud](https://confluent.cloud) account.  Then create a
-cluster and download the configuration file.
-
-TODO: configure app to run with Confluent Cloud config file.
+cluster and download the configuration file.  Export the values in the
+configuration file as the following environment variables before
+running the app:
 
 ``` bash
+export KAFKA_BOOTSTRAP_SERVERS=[from config file]
+export KAFKA_SECURITY_PROTOCOL=SASL_SSL
+export KAFKA_SASL_JAAS_CONFIG='org.apache.kafka.common.security.plain.PlainLoginModule required username="[from config file]" password="[from config file]";'
+export KAFKA_SASL_MECHANISM=PLAIN
+export KAFKA_SCHEMA_REGISTRY_URL=[confluent cloud schema registry]
 ./gradlew :final:run
 ```
 

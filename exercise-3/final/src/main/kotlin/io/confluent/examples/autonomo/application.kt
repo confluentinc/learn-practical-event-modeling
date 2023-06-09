@@ -13,8 +13,10 @@ import io.micronaut.runtime.Micronaut.*
 import jakarta.annotation.PostConstruct
 import jakarta.annotation.PreDestroy
 import jakarta.inject.Singleton
+import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerConfig
+import org.apache.kafka.common.config.SaslConfigs
 import org.apache.kafka.common.serialization.StringSerializer
 import org.apache.kafka.streams.KafkaStreams
 import org.apache.kafka.streams.StreamsConfig
@@ -39,11 +41,22 @@ class Beans {
 	fun rideEventProducer(
 		@Value("\${kafka.bootstrap.servers}")
 		kafkaBootstrapServers: String,
-		@Value("\${kafka.schema.registry.url}")
+        @Value("\${kafka.security.protocol}")
+        kafkaSecurityProtocol: String,
+        @Value("\${kafka.sasl.jaas.config}")
+        kafkaSaslJaasConfig: String,
+        @Value("\${kafka.sasl.mechanism}")
+        kafkaSaslMechanism: String,
+        @Value("\${kafka.schema.registry.url}")
 		schemaRegistryUrl: String,
 	): KafkaProducer<RideId, RideEvent> {
 		val producerConfig = Properties()
 		producerConfig[ProducerConfig.BOOTSTRAP_SERVERS_CONFIG] = kafkaBootstrapServers
+        if (kafkaSecurityProtocol.isNotBlank()) {
+            producerConfig[CommonClientConfigs.SECURITY_PROTOCOL_CONFIG] = kafkaSecurityProtocol
+            producerConfig[SaslConfigs.SASL_JAAS_CONFIG] = kafkaSaslJaasConfig
+            producerConfig[SaslConfigs.SASL_MECHANISM] = kafkaSaslMechanism
+        }
 		return KafkaProducer(
 			producerConfig,
 			StringSerializer(),
@@ -56,11 +69,22 @@ class Beans {
 	fun vehicleEventProducer(
 		@Value("\${kafka.bootstrap.servers}")
 		kafkaBootstrapServers: String,
+        @Value("\${kafka.security.protocol}")
+        kafkaSecurityProtocol: String,
+        @Value("\${kafka.sasl.jaas.config}")
+        kafkaSaslJaasConfig: String,
+        @Value("\${kafka.sasl.mechanism}")
+        kafkaSaslMechanism: String,
 		@Value("\${kafka.schema.registry.url}")
 		schemaRegistryUrl: String,
 	): KafkaProducer<String, VehicleEvent> {
 		val producerConfig = Properties()
 		producerConfig[ProducerConfig.BOOTSTRAP_SERVERS_CONFIG] = kafkaBootstrapServers
+        if (kafkaSecurityProtocol.isNotBlank()) {
+            producerConfig[CommonClientConfigs.SECURITY_PROTOCOL_CONFIG] = kafkaSecurityProtocol
+            producerConfig[SaslConfigs.SASL_JAAS_CONFIG] = kafkaSaslJaasConfig
+            producerConfig[SaslConfigs.SASL_MECHANISM] = kafkaSaslMechanism
+        }
 		return KafkaProducer(
 			producerConfig,
 			StringSerializer(),
@@ -73,6 +97,12 @@ class Beans {
 class TopologyRunner(
 	@Value("\${kafka.bootstrap.servers}")
 	kafkaBootstrapServers: String,
+    @Value("\${kafka.security.protocol}")
+    kafkaSecurityProtocol: String,
+    @Value("\${kafka.sasl.jaas.config}")
+    kafkaSaslJaasConfig: String,
+    @Value("\${kafka.sasl.mechanism}")
+    kafkaSaslMechanism: String,
 	@Value("\${kafka.schema.registry.url}")
 	schemaRegistryUrl: String,
 	@Value("\${kafka.streams.application.id}")
@@ -95,6 +125,11 @@ class TopologyRunner(
 		config[StreamsConfig.PROCESSING_GUARANTEE_CONFIG] = StreamsConfig.EXACTLY_ONCE_V2
 		config[StreamsConfig.TOPOLOGY_OPTIMIZATION_CONFIG] = StreamsConfig.OPTIMIZE
 		config[StreamsConfig.producerPrefix(ProducerConfig.ACKS_CONFIG)] = "all"
+        if (kafkaSecurityProtocol.isNotBlank()) {
+            config[CommonClientConfigs.SECURITY_PROTOCOL_CONFIG] = kafkaSecurityProtocol
+            config[SaslConfigs.SASL_JAAS_CONFIG] = kafkaSaslJaasConfig
+            config[SaslConfigs.SASL_MECHANISM] = kafkaSaslMechanism
+        }
 
 		val topology = AutonomoTopology.build(
 			rideEventsTopic,
